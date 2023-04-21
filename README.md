@@ -81,3 +81,10 @@ $ pip install pytest black
 ### 프로젝트 
  - TSP 시각화 => 유전알고리즘
  - 선형 회귀 모델을 만들어보자 => 경사하강법 
+
+
+
+
+ # 여담
+ spring oauth -> 보안쪽 사용해
+ fastAPI -> 플라스크 대신
