@@ -1,0 +1,97 @@
+from numpy import gradient
+
+
+def steepest_ascent(p):
+    current = random_init(p)
+    values = evaluate(current, p)
+    while True:
+        neighbors = mutants(current, p)
+        (successor, value_best_of) = best_of(neighbors, p)
+        if value_best_of >= values:
+            break
+        else:
+            current = successor
+            values = value_best_of
+    return (current, values)
+
+
+def mutants(current, p):
+    neighbors = []
+    for i in range(0, len(current)):
+        neighbors.append(mutate(current, i, DELTA, p))
+        neighbors.append(mutate(current, i, -DELTA, p))
+    return neighbors
+
+
+def best_of(neighbors, p): # 이거 보면서 활용할 예정.
+    all = []
+    for i in range(0, len(neighbors)):
+        all.append(evaluate(neighbors[i], p))
+    best_value = min(all)
+    best = neighbors[all.index(min(all))]
+    return (best, best_value)
+
+ALPHA = 0.01
+EPSILON = 0.0001
+
+def display_setting():
+    print()
+    print("Search algorithm: gradient Descent")
+    print()
+    print(f"Update rate : {ALPHA}")
+    print(f"Calculating Derivatives : {EPSILON}")
+
+def gd(current, p, value,EPSILON ):#이웃,현재값,입실론 값(없으면 계산 못함)
+    derivate = [] #미분값
+    # 미분할 때 필요한거 = 도메인 이유: 하한과 상한이 있어야한다.
+    domain = p[1] #첫째줄이 식이니까.
+    low = domain[1]
+    up = domain[2]
+    for i in range(len(current)):# current : 나의 친절한 이웃
+        value = current[i]
+        #미분갯수 담기
+        derivate = current[:i]
+        if(low[i] <= value + EPSILON <= up[i]): # 상한하한 바깥인지 알기위해 /EPSILON : 잎으로의 진행방향
+            value = value + EPSILON
+        derivate.append(value)
+        derivate.extend(current[i+1:])
+        gradient.append((evalute(derivate,p) - value)/EPSILON)
+
+    return gradient
+    # 미분은 내가 어떻게 해요?
+    # - 미분 = 기울기
+    # y = ax + b -> 점과 직선의 방정식
+    # 미분을 구해서 차이는 어떻게 계산해요?
+    # 
+    
+
+def take_step(current,gradient):
+    suc = []
+
+    for i in range (len(current)):
+        suc. append(current[i] - gradient[i]) #산 자체를 옮기는걸 전처리라고 해.
+
+    return suc
+
+if __name__ == "__main__":
+    p = create_problem("./data/Convex.txt")
+    current = randaom_init(p)
+    #gd(current,p,?,EPSILON)
+    value = evaluate(current,p)#확률은 x를 전근선으로 가진다
+    while True:
+        #값이다..
+        gradient = gradient(current,p,EPSILON)
+        next_p = take_step(current,gradient)
+        next_n = evaluate(next_p,p)
+        if next_n < value:
+            current=next_p
+            value =- next_n
+        else:
+            break
+    print(current,value)
+
+    #최솟값은 최고 작은 수가 나올때까지 빼는거 : 빼는거는 가능하다.
+    solution, minimum = steepest_ascent(p)
+    describe_problem(p)
+    display_setting()
+    #display_result(solution, minimum)
